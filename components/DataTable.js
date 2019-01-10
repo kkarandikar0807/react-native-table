@@ -4,8 +4,11 @@ import {
     StyleSheet, Text, View, ScrollView, FlatList,TouchableOpacity, Animated
 } from 'react-native';
 import PropTypes from 'prop-types';
-import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/FontAwesome';
+// import CheckBox from 'react-native-checkbox';
+import Checkbox from 'react-native-custom-checkbox';
+import Circle  from './shapes/Circle';
+
 
 
 let leftFlat = null;
@@ -35,8 +38,11 @@ export default class DataTable extends PureComponent {
     };
     constructor(props){
         super(props);
+        this.state = {
+            headerCheckbox: false
+        }
     }
-
+    rightdata = [];
     _keyExtractor = (item, index) => index.toString();
 
     _leftHeadRender(leftTitles) {
@@ -79,7 +85,28 @@ export default class DataTable extends PureComponent {
                                           this._onClickHeadItemCell(item,0,i);
                                       }}>
                         <View  style={styles.cellView}>
-                            <Text>{item["name"]}</Text>
+
+                            {
+                                item["name"] === 'checkbox' ? <Checkbox
+                                        style={styles.checkbox}
+                                        checked={this.state.headerCheckbox}
+                                        onChange={(name, checked) => {
+                                            this.props.list.forEach(l => {
+                                                l.isChecked = checked
+                                            })
+                                            this.setState({
+                                                headerCheckbox: checked
+                                            })
+                                            console.log(this.props.list)
+                                        }}
+                                    />
+                                    : null
+
+                            }
+
+
+
+                            <Text>{item["name"] === 'checkbox' ? null : item["name"]}</Text>
                             {
                                 item["sort"]!==undefined &&
                                 <Icon name={item["sort"]==='desc'?"caret-down":"caret-up"} size={20} style={styles.sortIconTransform}/>
@@ -106,25 +133,31 @@ export default class DataTable extends PureComponent {
 
 
     _rightRenderRow(rowData) {
+        // console.log('logging row data: - ', rowData);
         const dataKeys = this.props.dataKeys;
-        const showProgressBarKeys = this.props.showProgressBarKeys;
-
         return (
             <View style={styles.rightListRow}>
 
                 {(dataKeys !== undefined) && dataKeys.map((key, i) => (
-
                     <TouchableOpacity activeOpacity={0.5}
                                       key={`rlist${key}`}
                                       onPress={() => {
                                           this._onClickItemCell(rowData.item[key],rowData.index+1,i+1);
                                       }}>
-                        <View  style={[styles.cellRightView, rowData.index%2 && styles.tableCellBackground]}>
-                            {(showProgressBarKeys!=undefined && showProgressBarKeys.indexOf(key)>-1) &&
-                            <Progress.Bar progress={rowData.item[key]/totalColumsProgress.get(key)} width={99} borderWidth={0} height={38} borderRadius={0} style={{position:'absolute'}} color={"#6495ED"}/>
+                        <View  style={[styles.cellRightView, styles.tableCellBackground]}>
+                            {
+
+                                key === 'isChecked' ? <Checkbox
+                                        style={styles.checkbox}
+                                        checked={rowData.item[key]}
+                                        onChange={(name, checked) => {
+                                            rowData.item[key] = !rowData.item[key];
+                                        }
+                                        }
+                                    />
+                                    : key === 'testingType'? <Circle/> : <Text>{rowData.item[key]}</Text>
                             }
 
-                            <Text>{rowData.item[key]}</Text>
                         </View>
                     </TouchableOpacity>
                 ))}
@@ -139,9 +172,9 @@ export default class DataTable extends PureComponent {
         this.props.onClickItemCell(value,row,column);
     }
 
-    _onClickHeadItemCell(value,row,column){
+    _onClickHeadItemCell(value,row,column, headerCheckbox){
         if(this.props.onClickHeadItemCell !== undefined)
-            this.props.onClickHeadItemCell(value,row,column);
+            this.props.onClickHeadItemCell(value,row,column, headerCheckbox);
     }
 
 
@@ -174,7 +207,7 @@ export default class DataTable extends PureComponent {
 
     render() {
         const list = this.props.list;
-        //防止重复进入render
+
         if(list === undefined || list.length===0){
             return null;
         }
@@ -191,14 +224,13 @@ export default class DataTable extends PureComponent {
         const rightList = [];
 
         list.map((item, r) => {
-            //是否统计该行的总数
+
             Object.keys(item).map((key, i) => {
                 if (i === 0) {
-
                     rightList.push(item);
                 }
-
             });
+            this.rightdata = rightList;
         });
 
 
@@ -260,8 +292,8 @@ const styles = StyleSheet.create({
     firstCell: {
         alignItems: 'center',
         justifyContent: 'center',
-        borderColor: '#DCD7CD',
-        backgroundColor:'#c1c1c1'
+        borderColor: 'black',
+        backgroundColor:'#C8C8C8'
     },
     rightListRow: {
         width: '100%',
@@ -270,13 +302,13 @@ const styles = StyleSheet.create({
     rightTitleListRow:{
         width: '100%',
         flexDirection: 'row',
-        backgroundColor:'#c1c1c1'
+        backgroundColor:'#E8E8E8'
     },
     cellView: {
-        width: 150,
-        height: 40,
+        width: 140,
+        height: 30,
         // backgroundColor: '#db384c',
-        borderColor: '#DCD7CD',
+        borderColor: 'white',
         borderRightWidth: 1,
         borderBottomWidth: 1,
         flexDirection:'row',
@@ -284,20 +316,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     cellRightView:{
-        width: 150,
-        height: 40,
-        borderColor: '#DCD7CD',
+        width: 140,
+        height: 30,
+        borderColor: 'white',
         borderRightWidth: 1,
         borderBottomWidth: 1,
         alignItems: 'center',
         justifyContent: 'center',
     },
     tableCellBackground:{
-        backgroundColor: '#F7F6E7'
+        backgroundColor: 'white'
     },
 
     sortIconTransform:{
         marginLeft:3,
         // transform: [{rotate:'180deg'}]
     },
+    checkbox: {
+        backgroundColor: 'white',
+        color:'black'
+    }
 });

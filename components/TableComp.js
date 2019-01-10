@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import DataTable from './DataTable';
 
+
 export class TableComp extends Component {
 
 
@@ -9,35 +10,50 @@ export class TableComp extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            tableData :[{
-                testingWindow: "1/1/19 - 3/30/19",
-                athlete: "Chris A",
-                sport: "Mixed Martial Arts",
-                location: "New York, NY",
-                coordinator: "Brandon Buchanan/ Ext. 2205"
-            },
+            tableData :[
                 {
+                    isChecked: true,
+                    testingType: ['blood', 'urine'],
+                    testingWindow: "1/1/19 - 3/30/19",
+                    athlete: "Chris A",
+                    sport: "Mixed Martial Arts",
+                    location: "New York, NY",
+                    coordinator: "Brandon Buchanan"
+                },
+                {
+                    isChecked: true,
+                    testingType: ['blood', 'urine'],
                     testingWindow: "1/1/19 - 3/30/19",
                     athlete: "Chris C",
                     sport: "Mixed Martial Arts",
                     location: "Denver, CO",
-                    coordinator: "Brandon Buchanan/ Ext. 2205"
+                    coordinator: "Brandon Buchanan"
                 },
                 {
+                    isChecked: true,
+                    testingType: ['blood', 'urine'],
                     testingWindow: "1/1/19 - 3/30/19",
                     athlete: "Jesse G",
                     sport: "UFC",
                     location: "Colorado Springs, CO",
-                    coordinator: "Brandon Buchanan/ Ext. 2205"
+                    coordinator: "Brandon Buchanan"
                 },
                 {
+                    isChecked: true,
+                    testingType: ['blood', 'urine'],
                     testingWindow: "1/1/19 - 3/30/19",
                     athlete: "Kaushik K",
                     sport: "Mixed Martial Arts",
                     location: "Centinnal, CO",
-                    coordinator: "Brandon Buchanan/ Ext. 2205"
+                    coordinator: "Brandon Buchanan"
                 }],
             tableHead: [
+                {
+                    name: "checkbox"
+                },
+                {
+                    name: "Testing Type"
+                },
                 {
                     name:"Testing Window"
                 },
@@ -52,7 +68,7 @@ export class TableComp extends Component {
                     name:"Location"
                 },
                 {
-                    name:"Coordinator/Phone Number"
+                    name:"Coordinator"
                 }
             ]
         }
@@ -70,14 +86,21 @@ export class TableComp extends Component {
                 <DataTable
                     head={this.state.tableHead}
                     list={this.state.tableData}
-                    dataKeys={['testingWindow','athlete','sport','location','coordinator']}
+                    dataKeys={['isChecked', 'testingType', 'testingWindow','athlete','sport','location','coordinator']}
+
                     onClickItemCell={(item,row, column) =>{
 
                         // console.log(item,row,column);
                     }}
-                    onClickHeadItemCell={(item,row, column) =>{
+                    onClickHeadItemCell={(item,row, column, headerCheckbox) =>{
+                        // this.state.tableData.forEach(d => {
+                        //     d.isChecked = headerCheckbox;
+                        // })
+                        // this.setState({
+                        //     tableData: this.state.tableData
+                        // })
+                        console.log('header', headerCheckbox);
 
-                        // console.log(item,row,column);
                     }}
                 />
                 <Text> Hello </Text>
