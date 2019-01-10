@@ -10,7 +10,8 @@ export class TableComp extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            tableData :[
+
+            tableData: [
                 {
                     isChecked: true,
                     testingType: ['blood', 'urine'],
@@ -22,7 +23,7 @@ export class TableComp extends Component {
                 },
                 {
                     isChecked: true,
-                    testingType: ['blood', 'urine'],
+                    testingType: ['urine'],
                     testingWindow: "1/1/19 - 3/30/19",
                     athlete: "Chris C",
                     sport: "Mixed Martial Arts",
@@ -31,7 +32,7 @@ export class TableComp extends Component {
                 },
                 {
                     isChecked: true,
-                    testingType: ['blood', 'urine'],
+                    testingType: ['blood'],
                     testingWindow: "1/1/19 - 3/30/19",
                     athlete: "Jesse G",
                     sport: "UFC",
@@ -59,7 +60,7 @@ export class TableComp extends Component {
                 },
                 {
                     name:"Athlete",
-                    sort:"desc"
+                    sort:"asc"
                 },
                 {
                     name:"Sport"
@@ -110,7 +111,7 @@ export class TableComp extends Component {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff', width: "100%" },
+    container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: 'white', width: "100%" },
     head: { backgroundColor: '#f1f8ff', width: "100%" },
     text: { margin: 6 }
 });

@@ -1,7 +1,7 @@
 
 import React, { PureComponent } from 'react';
 import {
-    StyleSheet, Text, View, ScrollView, FlatList,TouchableOpacity, Animated
+    StyleSheet, Text, View, ScrollView, FlatList,TouchableOpacity, Animated, Image
 } from 'react-native';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -45,20 +45,20 @@ export default class DataTable extends PureComponent {
     rightdata = [];
     _keyExtractor = (item, index) => index.toString();
 
-    _leftHeadRender(leftTitles) {
-        if (leftTitles.length === 0) {
-            return null;
-        }
-        return (
-            <View style={styles.firstCell}>
-                {leftTitles.map((item, i) => (
-                    <View key={`lhead${i}`} style={styles.cellView}>
-                        <Text>{item["name"]}</Text>
-                    </View>
-                ))}
-            </View>
-        );
-    }
+    // _leftHeadRender(leftTitles) {
+    //     if (leftTitles.length === 0) {
+    //         return null;
+    //     }
+    //     return (
+    //         <View style={styles.firstCell}>
+    //             {leftTitles.map((item, i) => (
+    //                 <View key={`lhead${i}`} style={styles.cellView}>
+    //                     <Text>{item["name"]}</Text>
+    //                 </View>
+    //             ))}
+    //         </View>
+    //     );
+    // }
 
     _rightHeadRender(rightTitles) {
         if (rightTitles.length === 0) {
@@ -93,10 +93,10 @@ export default class DataTable extends PureComponent {
                                         onChange={(name, checked) => {
                                             this.props.list.forEach(l => {
                                                 l.isChecked = checked
-                                            })
+                                            });
                                             this.setState({
                                                 headerCheckbox: checked
-                                            })
+                                            });
                                             console.log(this.props.list)
                                         }}
                                     />
@@ -119,22 +119,60 @@ export default class DataTable extends PureComponent {
         );
     }
 
-    _leftRenderRow(rowData) {
-        return (
-            <View style={[styles.leftListRow,rowData.index%2 && styles.tableCellBackground]}>
-                {Object.keys(rowData.item).map(key => (
-                    <View key={`llist${key}`} style={styles.cellView}>
-                        <Text>{rowData.item[key]}</Text>
-                    </View>
-                ))}
-            </View>
-        );
-    }
+    // _leftRenderRow(rowData) {
+    //     return (
+    //         <View style={[styles.leftListRow,rowData.index%2 && styles.tableCellBackground]}>
+    //             {Object.keys(rowData.item).map(key => (
+    //                 <View key={`llist${key}`} style={styles.cellView}>
+    //                     <Text>{rowData.item[key]}</Text>
+    //                 </View>
+    //             ))}
+    //         </View>
+    //     );
+    // }
 
+
+    determineTableData(key, rowData) {
+                    switch (key) {
+                        case "testingType":
+                           if ((rowData.item[key].includes('blood') && rowData.item[key].includes('urine'))) {
+                               return(
+                                   <Image style={{width: 20, height: 20}} source={require('../assets/urine_blood.png')}/>
+                               )
+                           } else if ((rowData.item[key].includes('urine'))) {
+                                       return(
+                                           <Image style={{width: 20, height: 20}} source={require('../assets/urine.png')}/>
+                                       )
+                           } else if ((rowData.item[key].includes('blood'))) {
+                                       return (
+                                           <Image style={{width: 20, height: 20}} source={require('../assets/blood.jpg')}/>
+                                       )
+                           } else {
+                                               return null;
+                           }
+                        case "isChecked":
+                            return (
+                                <Checkbox
+                                    style={styles.checkbox}
+                                    checked={rowData.item[key]}
+                                    onChange={(name, checked) => {
+                                        rowData.item[key] = !rowData.item[key];
+                                    }
+                                    }
+                                />
+                            )
+                        default:
+                            return (
+                                <Text>{rowData.item[key]}</Text>
+                            )
+
+                    }
+    }
 
     _rightRenderRow(rowData) {
         // console.log('logging row data: - ', rowData);
         const dataKeys = this.props.dataKeys;
+
         return (
             <View style={styles.rightListRow}>
 
@@ -145,19 +183,7 @@ export default class DataTable extends PureComponent {
                                           this._onClickItemCell(rowData.item[key],rowData.index+1,i+1);
                                       }}>
                         <View  style={[styles.cellRightView, styles.tableCellBackground]}>
-                            {
-
-                                key === 'isChecked' ? <Checkbox
-                                        style={styles.checkbox}
-                                        checked={rowData.item[key]}
-                                        onChange={(name, checked) => {
-                                            rowData.item[key] = !rowData.item[key];
-                                        }
-                                        }
-                                    />
-                                    : key === 'testingType'? <Circle/> : <Text>{rowData.item[key]}</Text>
-                            }
-
+                            {this.determineTableData(key, rowData)}
                         </View>
                     </TouchableOpacity>
                 ))}
@@ -184,10 +210,10 @@ export default class DataTable extends PureComponent {
     }
 
 
-    leftScroll(e) {
-        const newScrollOffset = e.nativeEvent.contentOffset.y;
-        rightFlat.scrollToOffset({ offset: newScrollOffset, animated: false });
-    }
+    // leftScroll(e) {
+    //     const newScrollOffset = e.nativeEvent.contentOffset.y;
+    //     rightFlat.scrollToOffset({ offset: newScrollOffset, animated: false });
+    // }
 
     _sortDataListByColumn(column,sort){
 
@@ -211,15 +237,12 @@ export default class DataTable extends PureComponent {
         if(list === undefined || list.length===0){
             return null;
         }
-        const leftHead = this.props.head.slice(0, 1);
         const rightHead = this.props.head;
 
-        const showProgressBarKeys = this.props.showProgressBarKeys;
         totalColumsProgress = new Map();
 
 
 
-        const leftKey = this.props.leftKey;
         const leftList = [];
         const rightList = [];
 
@@ -272,7 +295,7 @@ const styles = StyleSheet.create({
         // marginTop: 20,
         flex: 1,
         width: "100%",
-        backgroundColor: '#F5FCFF',
+        backgroundColor: 'white',
     },
     left: {
         // backgroundColor: 'yellow',
@@ -305,7 +328,7 @@ const styles = StyleSheet.create({
         backgroundColor:'#E8E8E8'
     },
     cellView: {
-        width: 140,
+        width: 142,
         height: 30,
         // backgroundColor: '#db384c',
         borderColor: 'white',
@@ -316,9 +339,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     cellRightView:{
-        width: 140,
+        width: 142,
+        // marginRight: 20,
         height: 30,
         borderColor: 'white',
+
         borderRightWidth: 1,
         borderBottomWidth: 1,
         alignItems: 'center',
@@ -335,5 +360,17 @@ const styles = StyleSheet.create({
     checkbox: {
         backgroundColor: 'white',
         color:'black'
+    },
+    circleRed: {
+        width: 20,
+        height: 20,
+        borderRadius: 100,
+        backgroundColor: 'red'
+    },
+    circleBlue: {
+        width: 20,
+        height: 20,
+        borderRadius: 100,
+        backgroundColor: 'blue'
     }
 });
